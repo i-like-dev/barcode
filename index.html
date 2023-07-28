@@ -31,6 +31,16 @@
             border: none;
             border-radius: 5px;
         }
+        #switch-camera-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -39,10 +49,19 @@
         <video id="scanner-video" playsinline></video>
         <div id="scanner-result"></div>
         <button id="copy-button" onclick="copyToClipboard()">複製掃描結果</button>
+        <button id="switch-camera-button" onclick="switchCamera()">切換攝像頭</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script>
+        let isBackCamera = true; // 是否使用後置攝像頭
+
+        // 切換攝像頭
+        function switchCamera() {
+            isBackCamera = !isBackCamera;
+            startBarcodeScanner();
+        }
+
         // 訪問攝像頭並開始條碼掃描
         function startBarcodeScanner() {
             const video = document.getElementById('scanner-video');
@@ -54,7 +73,7 @@
                     type: "LiveStream",
                     target: video,
                     constraints: {
-                        facingMode: "environment" // 使用後置攝像頭
+                        facingMode: isBackCamera ? "environment" : "user", // 根據使用者選擇使用前/後鏡頭
                     },
                 },
                 decoder: {
