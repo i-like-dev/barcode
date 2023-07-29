@@ -21,26 +21,6 @@
             margin-top: 10px;
             font-size: 18px;
         }
-        #copy-button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        #switch-camera-button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
@@ -48,20 +28,10 @@
     <div id="scanner-container">
         <video id="scanner-video" playsinline></video>
         <div id="scanner-result"></div>
-        <button id="copy-button" onclick="copyToClipboard()">複製掃描結果</button>
-        <button id="switch-camera-button" onclick="switchCamera()">切換攝像頭</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script>
-        let isBackCamera = true; // 是否使用後置攝像頭
-
-        // 切換攝像頭
-        function switchCamera() {
-            isBackCamera = !isBackCamera;
-            startBarcodeScanner();
-        }
-
         // 訪問攝像頭並開始條碼掃描
         function startBarcodeScanner() {
             const video = document.getElementById('scanner-video');
@@ -73,7 +43,7 @@
                     type: "LiveStream",
                     target: video,
                     constraints: {
-                        facingMode: isBackCamera ? "environment" : "user", // 根據使用者選擇使用前/後鏡頭
+                        facingMode: "environment" // 使用後置攝像頭
                     },
                 },
                 decoder: {
@@ -90,8 +60,6 @@
             Quagga.onDetected(function (result) {
                 const code = result.codeResult.code;
                 resultDiv.innerText = `掃描結果: ${code}`;
-                // 儲存掃描結果到全域變數
-                window.scannedCode = code;
                 // 停止掃描
                 Quagga.stop();
             });
@@ -99,19 +67,6 @@
 
         // 當頁面載入完成後開始掃描
         document.addEventListener('DOMContentLoaded', startBarcodeScanner);
-
-        // 將掃描結果複製到剪貼簿
-        function copyToClipboard() {
-            if (window.scannedCode) {
-                const el = document.createElement('textarea');
-                el.value = window.scannedCode;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
-                alert('掃描結果已複製到剪貼簿！');
-            }
-        }
     </script>
 </body>
 </html>
